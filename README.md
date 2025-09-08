@@ -55,7 +55,7 @@ This backend API provides CRUD operations for a superhero database. The API is b
 | PUT    | /heroes/:id  | Update an existing superhero                      |
 | DELETE | /heroes/:id  | Delete a superhero                                |
 
-- Pagination is handled by query parameters, e.g., `?page=1`
+- Pagination is handled by query parameters, e.g., `?page=1` ; `?perPage=4`
 - Image upload is supported on create/update endpoints with `multipart/form-data` field named `images`
 
 ---
@@ -67,6 +67,5 @@ This backend API provides CRUD operations for a superhero database. The API is b
 - `images` are stored as URLs or paths after upload; multiple images allowed per superhero.
 - Validation is performed using Joi, requiring all key fields.
 - API expects JSON bodies or `multipart/form-data` for hero creation/updating.
-- Pagination limit is fixed at 5 items per request.
 
 ---
