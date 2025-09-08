@@ -1,0 +1,32 @@
+import { Router } from 'express';
+import {
+  deleteHeroController,
+  getHeroByIdController,
+  getHeroesController,
+  postHeroController,
+  putHeroController,
+} from '../controllers/superheroes.js';
+import { validateBody } from '../middlewars/validateBody.js';
+import {
+  postHeroValidation,
+  putHeroValidation,
+} from '../utils/bodyValidationSchemas.js';
+import { uploads } from '../middlewars/multer.js';
+
+export const superHeroRouter = Router();
+
+superHeroRouter.get('/superhero/:id', getHeroByIdController);
+superHeroRouter.get('/superhero', getHeroesController);
+superHeroRouter.post(
+  '/superhero',
+  uploads.single('images'),
+  validateBody(postHeroValidation),
+  postHeroController,
+);
+superHeroRouter.delete('/superhero/:id', deleteHeroController);
+superHeroRouter.put(
+  '/superhero/:id',
+  uploads.single('images'),
+  validateBody(putHeroValidation),
+  putHeroController,
+);
