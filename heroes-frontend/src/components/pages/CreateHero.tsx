@@ -7,7 +7,7 @@ import {
   updateHero,
 } from "../../servises/heroServises";
 import { useEffect } from "react";
-import { useHeroDraftStore } from "../../servises/states/heroDraft";
+import { useHeroDraftStore } from "../../servises/store/heroDraft";
 
 interface HeroForm {
   nickname: string;
@@ -94,7 +94,7 @@ const CreateEditHero = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target
-    setDraft(prev => ({ ...prev, [name]: value }));
+    setDraft(prev: HeroForm => ({ ...prev, [name]: value }));
   };
 
   return (
