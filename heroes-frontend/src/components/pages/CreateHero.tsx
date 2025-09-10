@@ -7,7 +7,7 @@ import {
   updateHero,
 } from "../../servises/heroServises";
 import { useEffect } from "react";
-import { useHeroDraftStore } from "../../servises/states/heroDraft";
+import { useHeroDraftStore } from "../../servises/store/heroDraft";
 
 interface HeroForm {
   nickname: string;
@@ -93,8 +93,8 @@ const CreateEditHero = () => {
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value } = event.target
-    setDraft(prev => ({ ...prev, [name]: value }));
+    const { name, value } = event.target;
+    setDraft((prev: HeroForm) => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -107,7 +107,10 @@ const CreateEditHero = () => {
           <input
             className={styles.input}
             placeholder="e.g., Night Falcon"
-            {...register("nickname", { required: "Nickname is required", onChange: handleChange })}
+            {...register("nickname", {
+              required: "Nickname is required",
+              onChange: handleChange,
+            })}
           />
           {errors.nickname && (
             <span className={styles.error}>{errors.nickname.message}</span>
@@ -119,7 +122,6 @@ const CreateEditHero = () => {
           <input
             className={styles.input}
             placeholder="e.g., Alex Vega"
-            
             {...register("real_name", { onChange: handleChange })}
           />
         </div>
@@ -154,7 +156,7 @@ const CreateEditHero = () => {
 
       <div className={styles.field}>
         <label className={styles.label}>Images</label>
-          <input type="file" multiple accept="image/*"{...register("images")} />
+        <input type="file" multiple accept="image/*" {...register("images")} />
       </div>
 
       <div className={styles.actions}>
@@ -168,7 +170,14 @@ const CreateEditHero = () => {
         >
           Cancel
         </button>
-        <button type="button" className={styles.cancel} onClick={() => {clearDraft(); reset()}}>
+        <button
+          type="button"
+          className={styles.cancel}
+          onClick={() => {
+            clearDraft();
+            reset();
+          }}
+        >
           Clear Form
         </button>
         <button type="submit" className={styles.save} disabled={isSubmitting}>
