@@ -94,7 +94,7 @@ const CreateEditHero = () => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target
-    setDraft(prev: HeroForm => ({ ...prev, [name]: value }));
+    setDraft((prev: HeroForm) => ({ ...prev, [name]: value }));
   };
 
   return (
