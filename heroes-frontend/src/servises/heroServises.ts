@@ -31,7 +31,7 @@ export interface HeroForm {
   images: FileList;
 }
 
-axios.defaults.baseURL = "http://localhost:3000";
+axios.defaults.baseURL = "https://heroes-test.onrender.com";
 
 export async function fetchHeroes(
   page = 1,
