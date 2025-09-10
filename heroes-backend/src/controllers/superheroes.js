@@ -45,10 +45,12 @@ export const deleteHeroController = async (req, res) => {
 export const putHeroController = async (req, res) => {
   const { id } = req.params;
   const payload = { ...req.body };
-
-  if (req.file) {
-    const url = await imagesSavingDir(req.file);
-    payload.images = url;
+  
+  if (req.files && req.files.length > 0) {
+    const urls = await Promise.all(
+      req.files.map((file) => imagesSavingDir(file)),
+    );
+    payload.images = urls;
   }
   const result = await updateHero(payload, id);
   return res.json({
