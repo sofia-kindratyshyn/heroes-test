@@ -1,0 +1,15 @@
+.wrapper {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  font-family: "Inter", sans-serif;
+}
+
+main {
+  width: 100vw;
+  margin-left: 270px;
+}
+
+a {
+  text-decoration: none;
+}
