@@ -1,31 +1,39 @@
 import createHttpError from 'http-errors';
 import { pool } from '../db/db.js';
 
-export const getHeroes = async ({ page = 1, perPage = 10, search }) => {
-  const offset = (page - 1) * perPage;
+export const getHeroes = async ({ page = 1, perPage = 5, search }) => {
+  const currentPage = Number(page) || 1;
+  const currentPerPage = Number(perPage) || 5;
+  const offset = (currentPage - 1) * currentPerPage;
 
-  let heroesList = []
+  let heroesList;
 
   if (search) {
     heroesList = await pool.query(
       'SELECT * FROM heroes WHERE nickname ILIKE $1 ORDER BY id LIMIT $2 OFFSET $3',
-      [`%${search}%`, perPage, offset],
+      [`%${search}%`, currentPerPage, offset],
     );
-   } else {
+  } else {
     heroesList = await pool.query(
-    'SELECT * FROM heroes ORDER BY id LIMIT $1 OFFSET $2',
-    [perPage, offset],
-  );}
+      'SELECT * FROM heroes ORDER BY id LIMIT $1 OFFSET $2',
+      [currentPerPage, offset],
+    );
+  }
 
-  const countResult = await pool.query('SELECT COUNT(*) FROM heroes');
+  const countResult = search
+    ? await pool.query('SELECT COUNT(*) FROM heroes WHERE nickname ILIKE $1', [
+        `%${search}%`,
+      ])
+    : await pool.query('SELECT COUNT(*) FROM heroes');
+
   const total = parseInt(countResult.rows[0].count, 10);
 
   return {
     heroes: heroesList.rows,
-    page,
-    perPage,
+    page: currentPage,
+    perPage: currentPerPage,
     total,
-    totalPages: Math.ceil(total / perPage),
+    totalPages: Math.ceil(total / currentPerPage),
   };
 };
 
