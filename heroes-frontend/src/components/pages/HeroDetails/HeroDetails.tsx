@@ -5,7 +5,7 @@ import {
   deleteHero,
   fetchHeroById,
   type Hero,
-} from "../../servises/heroServises";
+} from "../../../servises/heroServises";
 import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 

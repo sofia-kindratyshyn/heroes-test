@@ -7,6 +7,7 @@ import {
   updateHero,
 } from "../../servises/heroServises";
 import { useEffect } from "react";
+import { useHeroDraftStore } from "../../servises/states/heroDraft";
 
 interface HeroForm {
   nickname: string;
@@ -29,11 +30,17 @@ const CreateEditHero = () => {
 
   const { id } = useParams<{ id: string }>();
 
-
   useEffect(() => {
     if (id) {
       fetchHeroById(id).then((heroData) => {
         reset({
+          nickname: heroData.nickname,
+          real_name: heroData.real_name,
+          origin_description: heroData.origin_description,
+          superpowers: heroData.superpowers,
+          catch_phrase: heroData.catch_phrase,
+        });
+        setDraft({
           nickname: heroData.nickname,
           real_name: heroData.real_name,
           origin_description: heroData.origin_description,
@@ -52,7 +59,6 @@ const CreateEditHero = () => {
       formData.append("origin_description", data.origin_description);
       formData.append("superpowers", data.superpowers);
       formData.append("catch_phrase", data.catch_phrase);
-      console.log(data.images);
       if (data.images && data.images.length > 0) {
         Array.from(data.images).forEach((file) =>
           formData.append("images", file)
@@ -64,9 +70,31 @@ const CreateEditHero = () => {
         await createHero(formData);
       }
       reset();
+      clearDraft();
     } catch (err) {
       console.error("Error uploading hero:", err);
     }
+  };
+
+  const { draft, setDraft, clearDraft } = useHeroDraftStore();
+
+  useEffect(() => {
+    if (!id && draft) {
+      reset({
+        nickname: draft.nickname,
+        real_name: draft.real_name,
+        origin_description: draft.origin_description,
+        superpowers: draft.superpowers,
+        catch_phrase: draft.catch_phrase,
+      });
+    }
+  }, [id, draft, reset]);
+
+  const handleChange = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = event.target
+    setDraft(prev => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -79,7 +107,7 @@ const CreateEditHero = () => {
           <input
             className={styles.input}
             placeholder="e.g., Night Falcon"
-            {...register("nickname", { required: "Nickname is required" })}
+            {...register("nickname", { required: "Nickname is required", onChange: handleChange })}
           />
           {errors.nickname && (
             <span className={styles.error}>{errors.nickname.message}</span>
@@ -91,7 +119,8 @@ const CreateEditHero = () => {
           <input
             className={styles.input}
             placeholder="e.g., Alex Vega"
-            {...register("real_name")}
+            
+            {...register("real_name", { onChange: handleChange })}
           />
         </div>
       </div>
@@ -101,7 +130,7 @@ const CreateEditHero = () => {
         <textarea
           className={styles.textarea}
           placeholder="Brief backstory..."
-          {...register("origin_description")}
+          {...register("origin_description", { onChange: handleChange })}
         />
       </div>
 
@@ -110,7 +139,7 @@ const CreateEditHero = () => {
         <textarea
           className={styles.textarea}
           placeholder="List powers separated by commas"
-          {...register("superpowers")}
+          {...register("superpowers", { onChange: handleChange })}
         />
       </div>
 
@@ -119,13 +148,13 @@ const CreateEditHero = () => {
         <input
           className={styles.input}
           placeholder='e.g., "From the shadows above, justice descends."'
-          {...register("catch_phrase")}
+          {...register("catch_phrase", { onChange: handleChange })}
         />
       </div>
 
       <div className={styles.field}>
         <label className={styles.label}>Images</label>
-        <input type="file" multiple accept="image/*" {...register("images")} />
+          <input type="file" multiple accept="image/*"{...register("images")} />
       </div>
 
       <div className={styles.actions}>
@@ -133,12 +162,14 @@ const CreateEditHero = () => {
           type="button"
           className={styles.cancel}
           onClick={() => {
-            reset();
             navigate("/");
           }}
           disabled={isSubmitting}
         >
           Cancel
+        </button>
+        <button type="button" className={styles.cancel} onClick={() => {clearDraft(); reset()}}>
+          Clear Form
         </button>
         <button type="submit" className={styles.save} disabled={isSubmitting}>
           {isSubmitting ? "Saving..." : "Save Hero"}

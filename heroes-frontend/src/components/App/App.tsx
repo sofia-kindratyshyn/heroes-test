@@ -3,7 +3,7 @@ import Sidebar from "../Sidebar/Sidebar";
 import css from "./App.module.css";
 import HeroesList from "../HeroesList/HeroesList";
 import CreateEditHero from "../pages/CreateHero";
-import HeroDetails from "../HeroDetails/HeroDetails";
+import HeroDetails from "../pages/HeroDetails/HeroDetails";
 
 function App() {
   return (

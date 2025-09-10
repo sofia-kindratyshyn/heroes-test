@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import SearchField from "../SearchField/SearchField";
 import css from "./HeroesList.module.css";
 import { fetchHeroes, type HeroResponse } from "../../servises/heroServises";
 import { Link } from "react-router-dom";
 import { useDebounce } from "use-debounce";
+import Pagination from "../Pagination/Pagination";
 
 export default function HeroesList() {
   const [searchedValue, setSearchedValue] = useState("");
@@ -16,6 +17,15 @@ export default function HeroesList() {
     queryFn: () => fetchHeroes(currentPage, debouncedText),
     placeholderData: keepPreviousData
   });
+
+  useEffect(() => {
+    const totalPages = data?.totalPages ?? 0;
+    if (totalPages === 0 && currentPage !== 1) {
+      setCurrentPage(1);
+    } else if (totalPages > 0 && currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [data?.totalPages]);
 
   const getHandleSearch = (value: string) => {
     setSearchedValue(value);
@@ -45,13 +55,12 @@ export default function HeroesList() {
       <div className={css.heroListWrapper}>
         <h2>SuperHero List</h2>
         <ul className={css.heroesList}>
-          {data &&
-            data.heroes.map((hero) => (
+          {(data?.heroes ?? []).map((hero) => (
               <li key={hero.id}>
                 <div className={css.card}>
                   <img
                     className={css.avatar}
-                    src={hero.images[0]}
+                    src={Array.isArray(hero.images) ? (hero.images[0] ?? "") : (hero.images ?? "")}
                     alt="Hero avatar"
                   />
                   <div className={css.info}>
@@ -74,38 +83,14 @@ export default function HeroesList() {
               </li>
             ))}
         </ul>
-        
-        {data && data.totalPages > 1 && (
-          <div className={css.pagination}>
-            <button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className={css.paginationBtn}
-            >
-              Previous
-            </button>
-            
-            <div className={css.pageNumbers}>
-              {Array.from({ length: data.totalPages }, (_, i) => i + 1).map((page) => (
-                <button
-                  key={page}
-                  onClick={() => handlePageChange(page)}
-                  className={`${css.pageBtn} ${currentPage === page ? css.activePage : ''}`}
-                >
-                  {page}
-                </button>
-              ))}
-            </div>
-            
-            <button
-              onClick={handleNextPage}
-              disabled={currentPage === data.totalPages}
-              className={css.paginationBtn}
-            >
-              Next
-            </button>
-          </div>
-        )}
+        {(data?.totalPages ?? 0) > 1 &&
+          <Pagination
+            totalPages={data?.totalPages}
+            currentPage={currentPage}
+            handlePreviousPage={handlePreviousPage}
+            handleNextPage={handleNextPage}
+            handlePageChange={handlePageChange}
+          />}
       </div>
     </>
   );

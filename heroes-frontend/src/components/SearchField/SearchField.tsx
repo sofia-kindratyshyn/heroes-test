@@ -8,7 +8,7 @@ interface SearchFieldProps {
 
 export default function SearchField({ value, getValue }: SearchFieldProps) {
   function handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-    getValue(event.target.value);
+    getValue(event.target.value.trim());
   }
   return (
     <div className={css.searchWrapper}>
