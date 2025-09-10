@@ -19,14 +19,14 @@ superHeroRouter.get('/superhero/:id', getHeroByIdController);
 superHeroRouter.get('/superhero', getHeroesController);
 superHeroRouter.post(
   '/superhero',
-  uploads.single('images'),
+  uploads.array('images'),
   validateBody(postHeroValidation),
   postHeroController,
 );
 superHeroRouter.delete('/superhero/:id', deleteHeroController);
 superHeroRouter.put(
   '/superhero/:id',
-  uploads.single('images'),
+  uploads.array('images'),
   validateBody(putHeroValidation),
   putHeroController,
 );

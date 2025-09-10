@@ -19,10 +19,11 @@ export const getHeroByIdController = async (req, res) => {
 };
 export const postHeroController = async (req, res) => {
   const payload = { ...req.body };
-
-  if (req.file) {
-    const url = imagesSavingDir(req.file);
-    payload.images = url;
+  if (req.files && req.files.length > 0) {
+    const urls = await Promise.all(
+      req.files.map((file) => imagesSavingDir(file)),
+    );
+    payload.images = urls;
   }
   const result = await postHero(payload);
 
@@ -32,6 +33,7 @@ export const postHeroController = async (req, res) => {
     data: result,
   });
 };
+
 export const deleteHeroController = async (req, res) => {
   const { id } = req.params;
   await deleteHero(id);
@@ -43,10 +45,12 @@ export const deleteHeroController = async (req, res) => {
 export const putHeroController = async (req, res) => {
   const { id } = req.params;
   const payload = { ...req.body };
-
-  if (req.file) {
-    const url = await imagesSavingDir(req.file);
-    payload.images = url;
+  
+  if (req.files && req.files.length > 0) {
+    const urls = await Promise.all(
+      req.files.map((file) => imagesSavingDir(file)),
+    );
+    payload.images = urls;
   }
   const result = await updateHero(payload, id);
   return res.json({
@@ -56,10 +60,11 @@ export const putHeroController = async (req, res) => {
   });
 };
 export const getHeroesController = async (req, res) => {
-  const { page, perPage } = req.query;
+  const { page, perPage, search } = req.query;
   const result = await getHeroes({
     page,
     perPage,
+    search
   });
   return res.json({
     status: 200,
