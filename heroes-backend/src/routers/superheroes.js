@@ -6,7 +6,6 @@ import {
   postHeroController,
   putHeroController,
 } from '../controllers/superheroes.js';
-import { validateBody } from '../middlewars/validateBody.js';
 import {
   postHeroValidation,
   putHeroValidation,

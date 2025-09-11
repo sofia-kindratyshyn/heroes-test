@@ -11,6 +11,14 @@ export const getHeroByIdController = async (req, res) => {
   const { id } = req.params;
   const result = await getHeroById(id);
 
+  if (result instanceof Error) {
+    return res.status(result.status).json({
+      status: result.status,
+      message: result.message,
+      data: null,
+    });
+  }
+
   return res.json({
     status: 200,
     message: `Got superhero with id: ${id}`,
@@ -27,7 +35,7 @@ export const postHeroController = async (req, res) => {
   }
   const result = await postHero(payload);
 
-  return res.json({
+  return res.status(201).json({
     status: 201,
     message: 'Successfuly created superhero!',
     data: result,
@@ -37,7 +45,7 @@ export const postHeroController = async (req, res) => {
 export const deleteHeroController = async (req, res) => {
   const { id } = req.params;
   await deleteHero(id);
-  return res.json({
+  return res.status(200).json({
     status: 204,
     message: `Successfuly deleted hero with id : ${id}`,
   });

@@ -70,7 +70,9 @@ export const postHero = async (payload) => {
 
 export const updateHero = async (payload, id) => {
   const existendImages = await pool.query('SELECT images FROM heroes WHERE id = $1', [id]);
-  const imagesToSave = existendImages.rows[0].images.push(...payload.images);
+  const existingImagesArray = existendImages.rows[0].images || [];
+  const newImages = payload.images || [];
+  const imagesToSave = [...existingImagesArray, ...newImages];
   const updatedHero = await pool.query(
     `UPDATE heroes
      SET nickname=$1, real_name=$2, origin_description=$3, superpowers=$4, catch_phrase=$5, images=$6
