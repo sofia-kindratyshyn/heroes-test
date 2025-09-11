@@ -11,6 +11,7 @@ import {
   putHeroValidation,
 } from '../utils/bodyValidationSchemas.js';
 import { uploads } from '../middlewars/multer.js';
+import { validateBody } from "../middlewars/validateBody.js";
 
 export const superHeroRouter = Router();
 
