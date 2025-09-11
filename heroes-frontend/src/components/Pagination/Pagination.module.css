@@ -69,3 +69,31 @@
     background: #1d3044;
     border-color: #1d3044;
 }
+
+@media (max-width: 768px) {
+    .pagination {
+        gap: 4px;
+        margin-top: 24px;
+        padding: 16px 0;
+    }
+
+    .paginationBtn {
+        padding: 10px 12px;
+        font-size: 13px;
+    }
+
+    .pageNumbers {
+        gap: 2px;
+    }
+
+    .pageBtn {
+        padding: 10px 8px;
+        font-size: 13px;
+        min-width: 36px;
+    }
+
+    .paginationInfo {
+        font-size: 13px;
+        margin: 12px 0;
+    }
+}
