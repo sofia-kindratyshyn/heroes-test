@@ -1,23 +1,39 @@
 import createHttpError from 'http-errors';
 import { pool } from '../db/db.js';
 
-export const getHeroes = async ({ page = 1, perPage = 10 }) => {
-  const offset = (page - 1) * perPage;
+export const getHeroes = async ({ page = 1, perPage = 5, search }) => {
+  const currentPage = Number(page) || 1;
+  const currentPerPage = Number(perPage) || 5;
+  const offset = (currentPage - 1) * currentPerPage;
 
-  const heroesList = await pool.query(
-    'SELECT * FROM heroes ORDER BY id LIMIT $1 OFFSET $2',
-    [perPage, offset],
-  );
+  let heroesList;
 
-  const countResult = await pool.query('SELECT COUNT(*) FROM heroes');
+  if (search) {
+    heroesList = await pool.query(
+      'SELECT * FROM heroes WHERE nickname ILIKE $1 ORDER BY id LIMIT $2 OFFSET $3',
+      [`%${search}%`, currentPerPage, offset],
+    );
+  } else {
+    heroesList = await pool.query(
+      'SELECT * FROM heroes ORDER BY id LIMIT $1 OFFSET $2',
+      [currentPerPage, offset],
+    );
+  }
+
+  const countResult = search
+    ? await pool.query('SELECT COUNT(*) FROM heroes WHERE nickname ILIKE $1', [
+        `%${search}%`,
+      ])
+    : await pool.query('SELECT COUNT(*) FROM heroes');
+
   const total = parseInt(countResult.rows[0].count, 10);
 
   return {
-    data: heroesList.rows,
-    page,
-    perPage,
+    heroes: heroesList.rows,
+    page: currentPage,
+    perPage: currentPerPage,
     total,
-    totalPages: Math.ceil(total / perPage),
+    totalPages: Math.ceil(total / currentPerPage),
   };
 };
 
@@ -53,6 +69,8 @@ export const postHero = async (payload) => {
 };
 
 export const updateHero = async (payload, id) => {
+  const existendImages = await pool.query('SELECT images FROM heroes WHERE id = $1', [id]);
+  const imagesToSave = existendImages.rows[0].images.push(...payload.images);
   const updatedHero = await pool.query(
     `UPDATE heroes
      SET nickname=$1, real_name=$2, origin_description=$3, superpowers=$4, catch_phrase=$5, images=$6
@@ -64,11 +82,10 @@ export const updateHero = async (payload, id) => {
       payload.origin_description,
       payload.superpowers,
       payload.catch_phrase,
-      payload.images,
+      imagesToSave,
       id,
     ],
   );
   return updatedHero.rows[0];
 };
 
-//nickname, real_name, origin_description, superpowers, catch_phrase, images;
