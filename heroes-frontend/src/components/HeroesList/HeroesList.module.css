@@ -11,6 +11,23 @@
   font-family: sans-serif;
 }
 
+/* Mobile responsive card */
+@media (max-width: 768px) {
+  .card {
+    width: 100%;
+    max-width: 100%;
+    flex-direction: column;
+    text-align: center;
+    padding: 16px;
+  }
+
+  .actions {
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px;
+  }
+}
+
 .avatar {
   width: 72px;
   height: 72px;
@@ -88,4 +105,16 @@
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+}
+
+/* Mobile responsive wrapper */
+@media (max-width: 768px) {
+  .heroListWrapper {
+    padding: 12px 16px;
+  }
+
+  .heroesList {
+    flex-direction: column;
+    gap: 16px;
+  }
 }
