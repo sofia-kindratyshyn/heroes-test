@@ -13,7 +13,10 @@ export const serverSetup = async () => {
 
   app.use(express.json());
 
-  app.use(cors());
+  app.use(cors({
+  origin: ["https://heroes-test-1.onrender.com", "http://localhost:3000"],
+ }));
+
 
   app.use('/uploads', express.static(UPLOAD_DIR));
 
